@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maillots de Legende</title>
+    <meta name="description" content="Boutique de maillots de football avec visuels premium, personnalisation et panier.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Sora:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/main.css">
+</head>
+<body>
+    <div class="site-shell">
+        <header class="site-header">
+            <a class="brand-lockup" href="#">
+                <span class="brand-lockup__mark">ML</span>
+                <span class="brand-lockup__text">
+                    <strong>Maillots de Legende</strong>
+                    <small>Foot culture store</small>
+                </span>
+            </a>
+
+            <nav class="main-nav">
+                <button class="main-nav__link" type="button" data-shortcut-reset>Accueil</button>
+                <button class="main-nav__link" type="button" data-shortcut-championship="Ligue 1">Ligue 1</button>
+                <button class="main-nav__link" type="button" data-shortcut-championship="Premier League">Premier League</button>
+                <button class="main-nav__link" type="button" data-shortcut-championship="La Liga">La Liga</button>
+                <button class="main-nav__link" type="button" data-shortcut-championship="Selections nationales">Nationales</button>
+            </nav>
+
+            <div class="header-tools">
+                <button class="header-tool" type="button" id="mobile-filters-button">Filtres</button>
+                <button class="header-tool" type="button" data-panel-target="favorites-panel">
+                    Favoris
+                    <span id="favorites-count">0</span>
+                </button>
+                <button class="header-tool header-tool--accent" type="button" data-panel-target="cart-panel">
+                    Panier
+                    <span id="cart-count">0</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="promo-strip">
+            Flocage officiel ou personnalise +5 EUR / Patchs d'epaule +2,50 EUR / Livraison simulee pour la demo
+        </div>
+
+        <main class="page-content">
+            <section class="hero-shell">
+                <div class="hero-copy">
+                    <p class="eyebrow">Nouvelle collection</p>
+                    <h1>Les maillots qui donnent envie d'entrer dans la boutique.</h1>
+                    <p class="hero-copy__text">
+                        Une vitrine plus claire, des maillots mieux mis en scene et toutes les options utiles
+                        rangees dans la fiche produit pour garder une interface simple et elegante.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a class="primary-button" href="#catalog">Voir les maillots</a>
+                        <button class="ghost-button" type="button" data-shortcut-championship="Ligue 1">Voir la Ligue 1</button>
+                    </div>
+
+                    <div class="hero-meta">
+                        <div class="hero-meta__item">
+                            <strong id="hero-product-count">20</strong>
+                            <span>maillots en ligne</span>
+                        </div>
+                        <div class="hero-meta__item">
+                            <strong id="hero-championship-count">0</strong>
+                            <span>championnats et selections</span>
+                        </div>
+                        <div class="hero-meta__item hero-meta__item--address">
+                            <strong>Adresse</strong>
+                            <span id="saved-address-preview">Aucune adresse enregistree</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="hero-gallery" class="hero-gallery"></div>
+            </section>
+
+            <section class="quick-filter-bar">
+                <button class="filter-chip is-active" type="button" data-shortcut-reset>Tout</button>
+                <button class="filter-chip" type="button" data-shortcut-championship="Ligue 1">Ligue 1</button>
+                <button class="filter-chip" type="button" data-shortcut-championship="Premier League">Premier League</button>
+                <button class="filter-chip" type="button" data-shortcut-championship="La Liga">La Liga</button>
+                <button class="filter-chip" type="button" data-shortcut-championship="Serie A">Serie A</button>
+                <button class="filter-chip" type="button" data-shortcut-championship="Bundesliga">Bundesliga</button>
+                <button class="filter-chip" type="button" data-shortcut-championship="Selections nationales">Selections</button>
+            </section>
+
+            <section class="catalog-shell" id="catalog">
+                <div class="catalog-toolbar">
+                    <div class="catalog-toolbar__copy">
+                        <p class="eyebrow">Top maillots</p>
+                        <h2>Le mur des maillots</h2>
+                        <p id="catalog-summary">Chargement du catalogue...</p>
+                    </div>
+
+                    <div class="catalog-toolbar__controls">
+                        <div class="toolbar-field toolbar-field--search">
+                            <label for="search-input">Recherche</label>
+                            <input id="search-input" type="search" placeholder="PSG, Real Madrid, Argentine..." autocomplete="off">
+                        </div>
+
+                        <div class="toolbar-field toolbar-field--sort">
+                            <label for="sort-select">Tri</label>
+                            <select id="sort-select">
+                                <option value="featured">Mis en avant</option>
+                                <option value="price-asc">Prix croissant</option>
+                                <option value="price-desc">Prix decroissant</option>
+                                <option value="discount">Meilleures promos</option>
+                                <option value="name">Ordre alphabetique</option>
+                            </select>
+                        </div>
+
+                        <button class="text-button" type="button" id="reset-filters-top">Reinitialiser</button>
+                    </div>
+                </div>
+
+                <div id="products-list" class="products-grid"></div>
+            </section>
+        </main>
+    </div>
+
+    <div class="overlay" id="overlay" hidden></div>
+
+    <aside class="filters-panel" id="filters-panel">
+        <div class="filters-panel__header">
+            <div>
+                <p class="eyebrow">Affiner la selection</p>
+                <h2>Filtres</h2>
+            </div>
+            <button class="icon-button" type="button" id="close-filters-button" aria-label="Fermer les filtres">x</button>
+        </div>
+
+        <div class="filters-panel__body">
+            <div class="field-group">
+                <label for="filter-continent">Continent</label>
+                <select id="filter-continent">
+                    <option value="all">Tous</option>
+                </select>
+            </div>
+
+            <div class="field-group">
+                <label for="filter-country">Pays</label>
+                <select id="filter-country">
+                    <option value="all">Tous</option>
+                </select>
+            </div>
+
+            <div class="field-group">
+                <label for="filter-championship">Championnat</label>
+                <select id="filter-championship">
+                    <option value="all">Tous</option>
+                </select>
+            </div>
+
+            <div class="field-group">
+                <label for="filter-gender">Public</label>
+                <select id="filter-gender">
+                    <option value="all">Tous</option>
+                </select>
+            </div>
+
+            <div class="field-group">
+                <label for="price-range">Prix maximum</label>
+                <input id="price-range" type="range" min="70" max="120" step="1" value="120">
+                <p id="price-range-value" class="field-note">Jusqu'a 120 EUR</p>
+            </div>
+
+            <label class="toggle-field" for="filter-promo">
+                <input id="filter-promo" type="checkbox">
+                <span>Uniquement les promotions</span>
+            </label>
+
+            <label class="toggle-field" for="filter-stock">
+                <input id="filter-stock" type="checkbox">
+                <span>Stock confortable uniquement</span>
+            </label>
+
+            <button class="ghost-button ghost-button--full" id="reset-filters-button" type="button">
+                Reinitialiser les filtres
+            </button>
+        </div>
+    </aside>
+
+    <aside class="side-panel" id="favorites-panel" aria-hidden="true">
+        <div class="side-panel__head">
+            <div>
+                <p class="eyebrow">Selection perso</p>
+                <h2>Favoris</h2>
+            </div>
+            <button class="icon-button" type="button" data-close-panel aria-label="Fermer les favoris">x</button>
+        </div>
+        <div id="favorites-list" class="side-panel__body"></div>
+    </aside>
+
+    <aside class="side-panel side-panel--wide" id="cart-panel" aria-hidden="true">
+        <div class="side-panel__head">
+            <div>
+                <p class="eyebrow">Panier</p>
+                <h2>Commande simulee</h2>
+            </div>
+            <button class="icon-button" type="button" data-close-panel aria-label="Fermer le panier">x</button>
+        </div>
+
+        <div class="side-panel__body">
+            <section class="cart-section">
+                <h3>Articles</h3>
+                <div id="cart-items"></div>
+            </section>
+
+            <section class="cart-section">
+                <h3>Adresse de livraison</h3>
+                <form id="shipping-form" class="shipping-form">
+                    <div class="field-group">
+                        <label for="shipping-full-name">Nom complet</label>
+                        <input id="shipping-full-name" name="fullName" type="text" placeholder="Alex Martin">
+                    </div>
+
+                    <div class="field-group">
+                        <label for="shipping-street">Adresse</label>
+                        <input id="shipping-street" name="street" type="text" placeholder="12 rue du Stade">
+                    </div>
+
+                    <div class="shipping-form__row">
+                        <div class="field-group">
+                            <label for="shipping-postal-code">Code postal</label>
+                            <input id="shipping-postal-code" name="postalCode" type="text" placeholder="75000">
+                        </div>
+
+                        <div class="field-group">
+                            <label for="shipping-city">Ville</label>
+                            <input id="shipping-city" name="city" type="text" placeholder="Paris">
+                        </div>
+                    </div>
+
+                    <div class="field-group">
+                        <label for="shipping-country">Pays</label>
+                        <input id="shipping-country" name="country" type="text" placeholder="France">
+                    </div>
+                </form>
+            </section>
+
+            <section class="cart-section cart-section--summary">
+                <h2 id="cart-summary-title">0 article</h2>
+                <p id="cart-summary-text">Le panier est en attente de tes choix.</p>
+                <div id="cart-totals"></div>
+                <button class="primary-button primary-button--full" id="checkout-button" type="button">
+                    Valider la commande
+                </button>
+            </section>
+        </div>
+    </aside>
+
+    <section class="product-modal" id="product-modal" aria-hidden="true">
+        <div class="product-modal__dialog">
+            <button class="icon-button product-modal__close" type="button" id="close-product-modal" aria-label="Fermer la fiche produit">x</button>
+            <div id="product-modal-content"></div>
+        </div>
+    </section>
+
+    <div class="toast" id="toast" aria-live="polite"></div>
+
+    <script type="module" src="script/main.js"></script>
+</body>
+</html>

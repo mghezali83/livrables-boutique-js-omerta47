@@ -1,33 +1,30 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 
-// Import routes
 const productRoutes = require('./router/products');
 
-// Create Express app
 const app = express();
+const port = process.env.PORT || 3000;
+const frontendPath = path.join(__dirname, '..', 'frontend');
 
-// Middleware
-// Enable Cross-Origin Resource Sharing
 app.use(cors());
-// Parse JSON bodies
 app.use(express.json());
+app.use(express.static(frontendPath));
 
-// API Routes
 app.use('/api/products', productRoutes);
 
-// Simple route for testing the server is up
+app.get('/api', (req, res) => {
+  res.json({
+    message: 'API de la boutique de maillots disponible.',
+    endpoints: ['/api/products', '/api/products/meta', '/api/products/:id', '/api/products/checkout'],
+  });
+});
+
 app.get('/', (req, res) => {
-  res.send('Backend server is running.');
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
-// Define a port
-const PORT = process.env.PORT || 3000;
-
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Serveur backend demarre sur http://localhost:${port}`);
 });
-
-// We will add database connection here later
-// module.exports = db; // to export the db connection
