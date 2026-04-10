@@ -1,11 +1,14 @@
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 
-// Crée le lien avec ta base de données MySQL
 const pool = mysql.createPool({
     host: 'localhost',
-    user: 'root',      // Ton identifiant MySQL (souvent root)
-    password: '',      // TON MOT DE PASSE MySQL (laisse vide si tu n'en as pas)
-    database: 'boutique_omerta' // REMPLACE PAR LE NOM QUE TU AS DONNÉ À TA BASE
+    user: 'root',
+    password: 'root',
+    database: 'omerta47_db',  // ← correct database name
+    port: 3306,               // ← correct port
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-module.exports = pool.promise();
+module.exports = pool;
