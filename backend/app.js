@@ -1,30 +1,20 @@
 const express = require('express');
 const cors = require('cors');
-const path = require('path');
-
-const productRoutes = require('./router/products');
+const produitsRouter = require('./router/omerta');
 
 const app = express();
-const port = process.env.PORT || 3000;
-const frontendPath = path.join(__dirname, '..', 'frontend');
+const PORT = 3000;
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static(frontendPath));
 
-app.use('/api/products', productRoutes);
-
-app.get('/api', (req, res) => {
-  res.json({
-    message: 'API de la boutique de maillots disponible.',
-    endpoints: ['/api/products', '/api/products/meta', '/api/products/:id', '/api/products/checkout'],
-  });
-});
+// On lie les routes
+app.use('/api/produits', produitsRouter);
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(frontendPath, 'index.html'));
+  res.send('API Maillots Foot en ligne !');
 });
 
-app.listen(port, () => {
-  console.log(`Serveur backend demarre sur http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Serveur sur http://localhost:${PORT}`);
 });
