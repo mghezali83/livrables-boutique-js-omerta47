@@ -6,6 +6,7 @@ let cart = JSON.parse(localStorage.getItem("ultragoal-cart")) || [];
 let favorites = JSON.parse(localStorage.getItem("ultragoal-favorites")) || [];
 let savedAddress = JSON.parse(localStorage.getItem("ultragoal-address")) || null;
 let currentUser = JSON.parse(localStorage.getItem("ultragoal-user")) || null;
+let users = JSON.parse(localStorage.getItem("ultragoal-users")) || [];
 
 let currentProduct = null;
 let currentProductDetails = null;
@@ -121,7 +122,9 @@ function saveAddress(address) {
 function saveUser(user) {
     localStorage.setItem("ultragoal-user", JSON.stringify(user));
 }
-
+function saveUsers() {
+    localStorage.setItem("ultragoal-users", JSON.stringify(users));
+}
 function showToast(message) {
     const toast = document.getElementById("toast");
     toast.textContent = message;
@@ -1126,8 +1129,22 @@ function bindStaticEvents() {
             return;
         }
 
-        currentUser = { name, email, password };
+        // Vérifie si email déjà utilisé
+        const existingUser = users.find(u => u.email === email);
+
+        if (existingUser) {
+            showToast("Cet email est déjà utilisé");
+            return;
+        }
+
+        const newUser = { name, email, password };
+
+        users.push(newUser);
+        saveUsers();
+
+        currentUser = newUser;
         saveUser(currentUser);
+
         updateAccountUI();
         closeAuthModal();
         preloadSavedAddress();
@@ -1140,20 +1157,20 @@ function bindStaticEvents() {
         const email = document.getElementById("login-email").value.trim();
         const password = document.getElementById("login-password").value.trim();
 
-        if (!currentUser) {
-            showToast("Aucun compte enregistré, crée un compte d'abord");
-            return;
-        }
+        const user = users.find(u => u.email === email && u.password === password);
 
-        if (currentUser.email !== email || currentUser.password !== password) {
+        if (!user) {
             showToast("Email ou mot de passe incorrect");
             return;
         }
 
+        currentUser = user;
+        saveUser(currentUser);
+
         updateAccountUI();
         closeAuthModal();
         preloadSavedAddress();
-        showToast(`Bienvenue ${currentUser.name}`);
+        showToast(`Bienvenue ${user.name}`);
     });
 
     document.querySelectorAll('input[name="payment-method"]').forEach((input) => {
