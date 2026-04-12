@@ -218,10 +218,12 @@ router.post('/checkout', async (req, res) => {
         WHERE id = ?
       `, [quantity, variant.id]);
 
-            const reducedPrice =
-                Number(product.prix_base) * (1 - Number(product.reduction || 0) / 100);
-
-            let unitPrice = Number(reducedPrice.toFixed(2));
+            /* =========================
+               PRIX CHECKOUT
+               - 45€ normal
+               - 30€ promo
+            ========================= */
+            let unitPrice = Number(product.reduction) > 0 ? 30 : 45;
 
             if (flockingType !== 'none') {
                 unitPrice += 5;
@@ -249,7 +251,11 @@ router.post('/checkout', async (req, res) => {
         const subtotal = Number(
             orderItems.reduce((sum, item) => sum + item.lineTotal, 0).toFixed(2)
         );
-        const shipping = subtotal >= 180 ? 0 : 6.9;
+
+        /* =========================
+           LIVRAISON OFFERTE DÈS 90€
+        ========================= */
+        const shipping = subtotal >= 90 ? 0 : 6.9;
         const total = Number((subtotal + shipping).toFixed(2));
 
         await connection.commit();

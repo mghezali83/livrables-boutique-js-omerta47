@@ -2,45 +2,469 @@
 <html lang="fr">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMERTA FRAPPE - Boutique Officielle</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ULTRA GOAL - Boutique de maillots</title>
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet" />
 </head>
 
 <body>
+    <div class="site-wrapper">
 
-    <header>
-        <nav class="navbar">
-            <div class="logo">OMERTA <span>FRAPPE</span></div>
-            <ul class="nav-links">
-                <li><a href="#">Accueil</a></li>
-                <li><a href="#">Maillots</a></li>
-                <li><a href="#">Contact</a></li>
-            </ul>
-            <div class="cart-icon">
-                🛒 <span id="cart-count">0</span>
+        <header class="header">
+            <div class="topbar">
+                <p>Livraison offerte dès 90€ • Flocage officiel +5€ • Patch compétition +2,50€</p>
             </div>
-        </nav>
-    </header>
 
-    <section class="hero">
-        <h1>ÉQUIPEZ-VOUS COMME DES PROS</h1>
-        <p>Découvrez notre collection de 20 maillots officiels 2023/2024</p>
-    </section>
+            <div class="navbar">
+                <a href="#" class="logo">
+                    <span class="logo-main">ULTRA</span>
+                    <span class="logo-sub">GOAL</span>
+                </a>
 
-    <main class="container">
-        <h2 class="section-title">Nos Maillots</h2>
+                <nav class="main-nav">
+                    <ul class="nav-list">
+                        <li class="nav-item mega-trigger">
+                            <button class="nav-link nav-button" id="football-menu-btn" type="button">
+                                Football
+                            </button>
 
-        <div id="produits-liste" class="products-grid">
-            <p class="loading">Chargement de la collection...</p>
+                            <div class="mega-menu" id="football-mega-menu">
+                                <div class="mega-menu-column">
+                                    <h4>Championnats</h4>
+                                    <ul>
+                                        <li><button type="button" data-filter-type="championship"
+                                                data-filter-value="Ligue 1">Ligue 1</button></li>
+                                        <li><button type="button" data-filter-type="championship"
+                                                data-filter-value="La Liga">La Liga</button></li>
+                                        <li><button type="button" data-filter-type="championship"
+                                                data-filter-value="Serie A">Serie A</button></li>
+                                        <li><button type="button" data-filter-type="championship"
+                                                data-filter-value="Bundesliga">Bundesliga</button></li>
+                                        <li><button type="button" data-filter-type="championship"
+                                                data-filter-value="Équipes Nationales">Équipes Nationales</button></li>
+                                    </ul>
+                                </div>
+
+                                <div class="mega-menu-column">
+                                    <h4>Sélections rapides</h4>
+                                    <ul>
+                                        <li><button type="button" data-home-link="nouveautes">Nouveautés</button></li>
+                                        <li><button type="button" data-home-link="promotions">Promotions</button></li>
+                                        <li><button type="button" data-home-link="retro">Collections rétro</button></li>
+                                        <li><button type="button" data-home-link="legendes">Collection légendes</button>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <div class="mega-menu-column mega-menu-highlight">
+                                    <span class="mega-badge">Top ventes</span>
+                                    <h3>Maillots iconiques de la saison</h3>
+                                    <p>
+                                        Explore les plus gros clubs, les maillots nationaux
+                                        et les modèles en promo.
+                                    </p>
+                                    <button class="mega-cta" id="mega-discover-btn" type="button">
+                                        Voir le catalogue
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+
+                        <li><button class="nav-link nav-button" type="button"
+                                data-home-link="nouveautes">Nouveautés</button></li>
+                        <li><button class="nav-link nav-button" type="button"
+                                data-home-link="promotions">Promotions</button></li>
+                        <li><button class="nav-link nav-button" type="button"
+                                data-home-link="championnats">Championnats</button></li>
+                        <li><button class="nav-link nav-button" type="button" data-home-link="retro">Rétro</button></li>
+                    </ul>
+                </nav>
+
+                <div class="nav-actions">
+                    <div class="search-box">
+                        <input type="text" id="search-input" placeholder="Rechercher un maillot..."
+                            aria-label="Rechercher un maillot" />
+                    </div>
+
+                    <button class="icon-button" id="favorites-btn" type="button" aria-label="Favoris">
+                        ❤
+                        <span class="counter-badge" id="favorites-count">0</span>
+                    </button>
+
+                    <button class="icon-button" id="cart-btn" type="button" aria-label="Panier">
+                        🛒
+                        <span class="counter-badge" id="cart-count">0</span>
+                    </button>
+                </div>
+
+                <button class="mobile-menu-btn" id="mobile-menu-btn" type="button" aria-label="Ouvrir le menu">
+                    ☰
+                </button>
+            </div>
+
+            <div class="mobile-menu" id="mobile-menu">
+                <button type="button" data-home-link="nouveautes">Nouveautés</button>
+                <button type="button" data-home-link="promotions">Promotions</button>
+                <button type="button" data-home-link="championnats">Championnats</button>
+                <button type="button" data-home-link="retro">Collections rétro</button>
+                <button type="button" data-home-link="legendes">Légendes</button>
+            </div>
+        </header>
+
+        <section class="hero">
+            <div class="hero-content">
+                <span class="hero-tag">Nouvelle collection 2026</span>
+                <h1>Les plus beaux maillots de foot, au même endroit.</h1>
+                <p>
+                    Clubs européens, équipes nationales, promotions, collections
+                    légendes et personnalisation avec flocage et patchs.
+                </p>
+
+                <div class="hero-actions">
+                    <button class="primary-btn" id="hero-catalog-btn" type="button">
+                        Voir le catalogue
+                    </button>
+                    <button class="secondary-btn" id="hero-promo-btn" type="button">
+                        Voir les promos
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <main class="main-content">
+            <section class="home-section" id="nouveautes">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-kicker">Dernières sorties</span>
+                        <h2>Nouveautés</h2>
+                    </div>
+                    <button class="section-link" type="button" data-show-all="all">
+                        Tout voir
+                    </button>
+                </div>
+                <div class="home-cards-grid" id="nouveautes-list">
+                    <p class="loading-text">Chargement des nouveautés...</p>
+                </div>
+            </section>
+
+            <section class="home-section promotions-section" id="promotions">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-kicker">Bons plans</span>
+                        <h2>Promotions</h2>
+                    </div>
+                    <button class="section-link" type="button" data-show-all="promo">
+                        Voir les promos
+                    </button>
+                </div>
+                <div class="home-cards-grid" id="promotions-list">
+                    <p class="loading-text">Chargement des promotions...</p>
+                </div>
+            </section>
+
+            <section class="home-section" id="championnats">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-kicker">Par univers</span>
+                        <h2>Par championnat</h2>
+                    </div>
+                </div>
+
+                <div class="championship-grid" id="championship-grid">
+                    <button class="championship-card" type="button" data-filter-type="championship"
+                        data-filter-value="Ligue 1"><span>Ligue 1</span></button>
+                    <button class="championship-card" type="button" data-filter-type="championship"
+                        data-filter-value="La Liga"><span>La Liga</span></button>
+                    <button class="championship-card" type="button" data-filter-type="championship"
+                        data-filter-value="Serie A"><span>Serie A</span></button>
+                    <button class="championship-card" type="button" data-filter-type="championship"
+                        data-filter-value="Bundesliga"><span>Bundesliga</span></button>
+                    <button class="championship-card" type="button" data-filter-type="championship"
+                        data-filter-value="Équipes Nationales"><span>Équipes Nationales</span></button>
+                </div>
+            </section>
+
+            <section class="home-section" id="retro">
+                <div class="section-heading">
+                    <div>
+                        <span class="section-kicker">Ambiance collector</span>
+                        <h2>Collections rétro</h2>
+                    </div>
+                </div>
+
+                <div class="collection-banner-grid">
+                    <article class="collection-banner retro-banner">
+                        <div>
+                            <span class="banner-badge">Collection</span>
+                            <h3>Rétro vibes</h3>
+                            <p>Les classiques qui traversent les saisons, pour les fans de maillots iconiques.</p>
+                        </div>
+                    </article>
+
+                    <article class="collection-banner legend-banner" id="legendes">
+                        <div>
+                            <span class="banner-badge">Exclusif</span>
+                            <h3>Légendes du foot</h3>
+                            <p>Maillots inspirés des grands noms avec configurateur flocage et finitions premium.</p>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="catalog-section" id="catalogue">
+                <div class="section-heading catalog-heading">
+                    <div>
+                        <span class="section-kicker">Catalogue complet</span>
+                        <h2>Tous les maillots</h2>
+                    </div>
+                    <p class="catalog-count" id="catalog-count">0 produit</p>
+                </div>
+
+                <div class="catalog-toolbar">
+                    <div class="filters-group">
+                        <select id="filter-championship">
+                            <option value="">Tous les championnats</option>
+                        </select>
+
+                        <select id="filter-country">
+                            <option value="">Tous les pays</option>
+                        </select>
+
+                        <select id="filter-sex">
+                            <option value="">Tous les profils</option>
+                        </select>
+
+                        <select id="sort-select">
+                            <option value="default">Tri par défaut</option>
+                            <option value="price-asc">Prix croissant</option>
+                            <option value="price-desc">Prix décroissant</option>
+                        </select>
+                    </div>
+
+                    <button class="reset-btn" id="reset-filters-btn" type="button">
+                        Réinitialiser
+                    </button>
+                </div>
+
+                <div id="produits-liste" class="products-grid">
+                    <p class="loading-text">Chargement du catalogue...</p>
+                </div>
+            </section>
+        </main>
+
+        <div class="modal-overlay hidden" id="product-modal-overlay">
+            <div class="product-modal">
+                <button class="close-modal-btn" id="close-product-modal" type="button" aria-label="Fermer">×</button>
+
+                <div class="product-modal-body">
+                    <div class="product-gallery">
+                        <button class="gallery-arrow left" id="gallery-prev" type="button">‹</button>
+
+                        <div class="gallery-main">
+                            <img id="modal-main-image" src="" alt="Produit" />
+                        </div>
+
+                        <button class="gallery-arrow right" id="gallery-next" type="button">›</button>
+
+                        <div class="gallery-thumbs" id="gallery-thumbs"></div>
+                    </div>
+
+                    <div class="product-infos">
+                        <span class="product-chip" id="modal-product-chip">Disponible</span>
+                        <h2 id="modal-product-name">Nom produit</h2>
+                        <p class="product-meta" id="modal-product-meta">Club • Championnat</p>
+
+                        <div class="product-price-box">
+                            <div class="price-line">
+                                <span class="current-price" id="modal-current-price">89,99 €</span>
+                                <span class="old-price hidden" id="modal-old-price">99,99 €</span>
+                                <span class="discount-badge hidden" id="modal-discount-badge">-10%</span>
+                            </div>
+                            <p class="stock-line" id="modal-stock-line">Stock disponible</p>
+                        </div>
+
+                        <div class="description-box">
+                            <p id="modal-description-short"></p>
+                            <p class="hidden" id="modal-description-full"></p>
+                            <button class="text-link-btn" id="toggle-description-btn" type="button">Lire plus</button>
+                        </div>
+
+                        <div class="config-block">
+                            <h3>Choix de la taille</h3>
+                            <div class="size-options" id="size-options"></div>
+                        </div>
+
+                        <div class="config-block">
+                            <h3>Quantité</h3>
+                            <div class="quantity-selector">
+                                <button type="button" id="qty-minus">-</button>
+                                <span id="qty-value">1</span>
+                                <button type="button" id="qty-plus">+</button>
+                            </div>
+                        </div>
+
+                        <div class="config-block">
+                            <h3>Flocage</h3>
+                            <select id="flocking-select">
+                                <option value="none">Sans flocage</option>
+                                <option value="custom">Personnalisé (+5€)</option>
+                            </select>
+
+                            <div class="hidden" id="official-player-wrapper">
+                                <select id="official-player-select">
+                                    <option value="">Choisir un joueur</option>
+                                </select>
+                            </div>
+
+                            <div class="hidden" id="custom-flocking-wrapper">
+                                <input type="text" id="custom-name-input" placeholder="Nom personnalisé"
+                                    maxlength="16" />
+                                <input type="number" id="custom-number-input" placeholder="Numéro" min="0" max="99" />
+                            </div>
+                        </div>
+
+                        <div class="config-block">
+                            <h3>Patch épaule</h3>
+                            <select id="patch-select">
+                                <option value="none">Sans patch</option>
+                                <option value="ldc">Patch Ligue des Champions (+2,50€)</option>
+                            </select>
+                        </div>
+
+                        <div class="visual-config-box">
+                            <h3>Aperçu rapide</h3>
+                            <div class="visual-config-card">
+                                <img id="config-preview-image" src="" alt="Aperçu maillot" />
+                                <div class="visual-config-text">
+                                    <p id="config-preview-name">Sans flocage</p>
+                                    <p id="config-preview-patch">Sans patch</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="final-price-box">
+                            <span>Prix configuré :</span>
+                            <strong id="modal-final-config-price">89,99 €</strong>
+                        </div>
+
+                        <div class="modal-actions">
+                            <button class="primary-btn" id="add-to-cart-btn" type="button">Ajouter au panier</button>
+                            <button class="secondary-btn" id="add-to-favorites-btn" type="button">Ajouter aux
+                                favoris</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="similar-products-section">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">À découvrir aussi</span>
+                            <h3>Produits similaires</h3>
+                        </div>
+                    </div>
+                    <div class="similar-products-grid" id="similar-products-list"></div>
+                </div>
+            </div>
         </div>
-    </main>
 
-    <footer>
-        <p>&copy; 2026 OMERTA FRAPPE - Tous droits réservés</p>
-    </footer>
+        <aside class="cart-drawer" id="cart-drawer">
+            <div class="cart-drawer-header">
+                <h2>Mon panier</h2>
+                <button id="close-cart-btn" type="button">×</button>
+            </div>
+
+            <div class="cart-drawer-body" id="cart-items">
+                <p class="empty-message">Ton panier est vide.</p>
+            </div>
+
+            <div class="cart-drawer-footer">
+                <div class="cart-total-line">
+                    <span>Total</span>
+                    <strong id="cart-total">0,00 €</strong>
+                </div>
+                <button class="primary-btn" id="checkout-btn" type="button">Passer commande</button>
+            </div>
+        </aside>
+
+        <aside class="favorites-drawer" id="favorites-drawer">
+            <div class="cart-drawer-header">
+                <h2>Mes favoris</h2>
+                <button id="close-favorites-btn" type="button">×</button>
+            </div>
+
+            <div class="cart-drawer-body" id="favorites-items">
+                <p class="empty-message">Aucun favori pour le moment.</p>
+            </div>
+        </aside>
+
+        <div class="modal-overlay hidden" id="checkout-modal-overlay">
+            <div class="checkout-modal">
+                <button class="close-modal-btn" id="close-checkout-modal" type="button" aria-label="Fermer">×</button>
+
+                <div class="checkout-modal-content">
+                    <div class="section-heading">
+                        <div>
+                            <span class="section-kicker">Validation de commande</span>
+                            <h2>Adresse de livraison</h2>
+                        </div>
+                    </div>
+
+                    <form id="checkout-form" class="checkout-form">
+                        <div class="checkout-grid">
+                            <input type="text" id="checkout-fullname" placeholder="Nom complet" required />
+                            <input type="text" id="checkout-street" placeholder="Adresse" required />
+                            <input type="text" id="checkout-postalcode" placeholder="Code postal" required />
+                            <input type="text" id="checkout-city" placeholder="Ville" required />
+                            <input type="text" id="checkout-country" placeholder="Pays" required />
+                        </div>
+
+                        <div class="checkout-summary" id="checkout-summary"></div>
+
+                        <div class="modal-actions">
+                            <button class="primary-btn" type="submit">Confirmer la commande</button>
+                            <button class="secondary-btn" id="cancel-checkout-btn" type="button">Annuler</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="toast" id="toast">Produit ajouté au panier</div>
+
+        <footer class="footer">
+            <div class="footer-content">
+                <div>
+                    <h3>ULTRA GOAL</h3>
+                    <p>Boutique de maillots de football avec promotions, favoris, panier et personnalisation.</p>
+                </div>
+
+                <div>
+                    <h4>Catalogue</h4>
+                    <ul>
+                        <li><button type="button" data-home-link="catalogue">Tous les produits</button></li>
+                        <li><button type="button" data-home-link="promotions">Promotions</button></li>
+                        <li><button type="button" data-home-link="retro">Rétro</button></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4>Services</h4>
+                    <ul>
+                        <li>Panier dynamique</li>
+                        <li>Favoris</li>
+                        <li>Personnalisation</li>
+                    </ul>
+                </div>
+            </div>
+
+            <p class="footer-copy">© 2026 ULTRA GOAL- Tous droits réservés</p>
+        </footer>
+    </div>
 
     <script src="script/main.js"></script>
 </body>
