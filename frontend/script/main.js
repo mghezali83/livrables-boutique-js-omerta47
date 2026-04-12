@@ -163,7 +163,24 @@ function openAuthModal() {
 function closeAuthModal() {
     document.getElementById("auth-modal-overlay").classList.add("hidden");
 }
+function toggleAccountDropdown(forceOpen = null) {
+    const dropdown = document.getElementById("account-dropdown");
+    if (!dropdown) return;
 
+    const shouldOpen = forceOpen === null
+        ? dropdown.classList.contains("hidden")
+        : forceOpen;
+
+    dropdown.classList.toggle("hidden", !shouldOpen);
+}
+
+function logoutUser() {
+    currentUser = null;
+    localStorage.removeItem("ultragoal-user");
+    updateAccountUI();
+    toggleAccountDropdown(false);
+    showToast("Déconnecté");
+}
 function resolveLogoCandidates(baseName) {
     return [
         `./assets/${baseName}.png`,
@@ -1014,6 +1031,7 @@ function updateCounters() {
    EVENTS
 ========================= */
 function bindStaticEvents() {
+    document.getElementById("logout-btn").addEventListener("click", logoutUser);
     document.getElementById("filter-championship").addEventListener("change", applyFiltersAndSort);
     document.getElementById("filter-country").addEventListener("change", applyFiltersAndSort);
     document.getElementById("filter-sex").addEventListener("change", applyFiltersAndSort);
@@ -1085,7 +1103,7 @@ function bindStaticEvents() {
 
     document.getElementById("account-btn").addEventListener("click", () => {
         if (currentUser) {
-            showToast(`Connecté : ${currentUser.name}`);
+            toggleAccountDropdown();
             return;
         }
         openAuthModal();
@@ -1184,6 +1202,12 @@ function bindStaticEvents() {
     });
 
     document.addEventListener("click", (event) => {
+        const dropdown = document.getElementById("account-dropdown");
+        const accountWrapper = event.target.closest(".account-menu-wrapper");
+
+        if (dropdown && !accountWrapper) {
+            dropdown.classList.add("hidden");
+        }
         const openBtn = event.target.closest("[data-open-product]");
         if (openBtn) {
             openProductModal(openBtn.dataset.openProduct);

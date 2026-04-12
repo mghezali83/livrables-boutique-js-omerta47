@@ -1881,3 +1881,34 @@ a {
     object-fit: contain;
     display: block;
 }
+
+.account-menu-wrapper {
+    position: relative;
+}
+
+.account-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    min-width: 160px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 8px;
+    z-index: 1300;
+}
+
+.account-dropdown button {
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-weight: 600;
+    color: var(--danger);
+    background: white;
+}
+
+.account-dropdown button:hover {
+    background: #fff1f3;
+}
