@@ -17,7 +17,7 @@
 
         <header class="header">
             <div class="topbar">
-                <p>Livraison offerte dès 90€ • Flocage officiel +5€ • Patch compétition +2,50€</p>
+                <p>Livraison offerte dès 90€ • Flocage personnalisé +5€ • Patch compétition +2,50€</p>
             </div>
 
             <div class="navbar">
@@ -90,6 +90,10 @@
                         <input type="text" id="search-input" placeholder="Rechercher un maillot..."
                             aria-label="Rechercher un maillot" />
                     </div>
+
+                    <button class="account-button" id="account-btn" type="button" aria-label="Compte">
+                        <span id="account-btn-label">Connexion</span>
+                    </button>
 
                     <button class="icon-button" id="favorites-btn" type="button" aria-label="Favoris">
                         ❤
@@ -332,8 +336,13 @@
                             <h3>Patch épaule</h3>
                             <select id="patch-select">
                                 <option value="none">Sans patch</option>
-                                <option value="ldc">Patch Ligue des Champions (+2,50€)</option>
+                                <option value="competition">Patch compétition (+2,50€)</option>
                             </select>
+
+                            <div class="patch-hover-preview hidden" id="patch-hover-preview">
+                                <img id="patch-hover-image" src="" alt="Aperçu patch" />
+                                <span id="patch-hover-label"></span>
+                            </div>
                         </div>
 
                         <div class="visual-config-box">
@@ -403,36 +412,185 @@
         </aside>
 
         <div class="modal-overlay hidden" id="checkout-modal-overlay">
-            <div class="checkout-modal">
-                <button class="close-modal-btn" id="close-checkout-modal" type="button" aria-label="Fermer">×</button>
+            <div class="checkout-page-shell">
+                <button class="close-modal-btn checkout-page-close" id="close-checkout-modal" type="button"
+                    aria-label="Fermer">×</button>
 
-                <div class="checkout-modal-content">
-                    <div class="section-heading">
-                        <div>
-                            <span class="section-kicker">Validation de commande</span>
-                            <h2>Adresse de livraison</h2>
-                        </div>
+                <div class="checkout-page-layout">
+                    <div class="checkout-page-left">
+                        <span class="section-kicker">Validation de commande</span>
+                        <h2 class="checkout-page-title">Adresse de livraison</h2>
+                        <p class="checkout-page-text">
+                            Finalise ta commande avec une adresse de livraison complète.
+                            Cette étape reste une simulation pour ton projet.
+                        </p>
+
+                        <form id="checkout-form" class="checkout-page-form">
+                            <div class="checkout-page-grid">
+                                <div class="checkout-field full">
+                                    <label for="checkout-fullname">Nom complet</label>
+                                    <input type="text" id="checkout-fullname" placeholder="Ex : Mohamed Ghezali"
+                                        required />
+                                </div>
+
+                                <div class="checkout-field full">
+                                    <label for="checkout-street">Adresse</label>
+                                    <input type="text" id="checkout-street" placeholder="Ex : 12 rue de Paris"
+                                        required />
+                                </div>
+
+                                <div class="checkout-field">
+                                    <label for="checkout-postalcode">Code postal</label>
+                                    <input type="text" id="checkout-postalcode" placeholder="83000" required />
+                                </div>
+
+                                <div class="checkout-field">
+                                    <label for="checkout-city">Ville</label>
+                                    <input type="text" id="checkout-city" placeholder="Toulon" required />
+                                </div>
+
+                                <div class="checkout-field full">
+                                    <label for="checkout-country">Pays</label>
+                                    <input type="text" id="checkout-country" placeholder="France" required />
+                                </div>
+                            </div>
+
+                            <div class="checkout-page-actions">
+                                <button class="primary-btn" type="submit">Confirmer la commande</button>
+                                <button class="secondary-btn" id="cancel-checkout-btn" type="button">Annuler</button>
+                            </div>
+                        </form>
                     </div>
 
-                    <form id="checkout-form" class="checkout-form">
-                        <div class="checkout-grid">
-                            <input type="text" id="checkout-fullname" placeholder="Nom complet" required />
-                            <input type="text" id="checkout-street" placeholder="Adresse" required />
-                            <input type="text" id="checkout-postalcode" placeholder="Code postal" required />
-                            <input type="text" id="checkout-city" placeholder="Ville" required />
-                            <input type="text" id="checkout-country" placeholder="Pays" required />
+                    <div class="checkout-page-right">
+                        <div class="checkout-summary-card">
+                            <h3>Récapitulatif</h3>
+                            <div id="checkout-summary"></div>
                         </div>
 
-                        <div class="checkout-summary" id="checkout-summary"></div>
+                        <div class="payment-card-box">
+                            <h3>Paiement</h3>
 
-                        <div class="modal-actions">
-                            <button class="primary-btn" type="submit">Confirmer la commande</button>
-                            <button class="secondary-btn" id="cancel-checkout-btn" type="button">Annuler</button>
+                            <div class="payment-methods">
+                                <label class="payment-method-pill active">
+                                    <input type="radio" name="payment-method" value="card" checked />
+                                    Carte bancaire
+                                </label>
+
+                                <label class="payment-method-pill">
+                                    <input type="radio" name="payment-method" value="applepay" />
+                                    Apple Pay
+                                </label>
+                            </div>
+
+                            <div id="card-payment-fields">
+                                <div class="card-brand-row">
+                                    <div class="card-brand-placeholder" id="card-brand-placeholder">Aucune carte
+                                        détectée</div>
+
+                                    <div class="card-brand-logos">
+                                        <img id="visa-logo" class="card-logo-image hidden" alt="Visa" />
+                                        <img id="mastercard-logo" class="card-logo-image hidden" alt="Mastercard" />
+                                    </div>
+                                </div>
+
+                                <div class="checkout-field full">
+                                    <label for="card-holder">Titulaire de la carte</label>
+                                    <input type="text" id="card-holder" placeholder="Nom sur la carte" />
+                                </div>
+
+                                <div class="checkout-field full">
+                                    <label for="card-number">Numéro de carte</label>
+                                    <input type="text" id="card-number" placeholder="1234 5678 9012 3456"
+                                        maxlength="19" />
+                                </div>
+
+                                <div class="checkout-page-grid">
+                                    <div class="checkout-field">
+                                        <label for="card-expiry">Expiration</label>
+                                        <input type="text" id="card-expiry" placeholder="MM/AA" maxlength="5" />
+                                    </div>
+
+                                    <div class="checkout-field">
+                                        <label for="card-cvc">CVC</label>
+                                        <input type="text" id="card-cvc" placeholder="123" maxlength="4" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="applepay-box hidden" id="applepay-box">
+                                <p>Paiement rapide simulé avec Apple Pay.</p>
+                                <button type="button" class="applepay-btn" id="applepay-btn">
+                                    <img id="applepay-button-logo" class="applepay-button-logo" alt="Apple Pay" />
+                                </button>
+                            </div>
                         </div>
-                    </form>
+
+                        <div class="checkout-info-card">
+                            <h4>Infos projet</h4>
+                            <p>
+                                Aucun paiement réel n’est effectué ici. La commande est simulée
+                                pour démontrer la logique panier, stock et validation.
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <div class="modal-overlay hidden" id="auth-modal-overlay">
+            <div class="auth-modal">
+                <button class="close-modal-btn" id="close-auth-modal" type="button" aria-label="Fermer">×</button>
+
+                <div class="auth-modal-layout">
+                    <div class="auth-panel">
+                        <span class="section-kicker">Compte utilisateur</span>
+                        <h2>Connexion</h2>
+                        <p>Connecte-toi pour sauvegarder ton espace client simulé.</p>
+
+                        <form id="login-form" class="auth-form">
+                            <div class="checkout-field full">
+                                <label for="login-email">Email</label>
+                                <input type="email" id="login-email" placeholder="email@exemple.com" required />
+                            </div>
+
+                            <div class="checkout-field full">
+                                <label for="login-password">Mot de passe</label>
+                                <input type="password" id="login-password" placeholder="Mot de passe" required />
+                            </div>
+
+                            <button class="primary-btn" type="submit">Se connecter</button>
+                        </form>
+                    </div>
+
+                    <div class="auth-panel auth-panel-secondary">
+                        <span class="section-kicker">Nouveau client</span>
+                        <h2>Créer un compte</h2>
+                        <p>Compte simulé enregistré localement pour le projet.</p>
+
+                        <form id="register-form" class="auth-form">
+                            <div class="checkout-field full">
+                                <label for="register-name">Nom complet</label>
+                                <input type="text" id="register-name" placeholder="Nom complet" required />
+                            </div>
+
+                            <div class="checkout-field full">
+                                <label for="register-email">Email</label>
+                                <input type="email" id="register-email" placeholder="email@exemple.com" required />
+                            </div>
+
+                            <div class="checkout-field full">
+                                <label for="register-password">Mot de passe</label>
+                                <input type="password" id="register-password" placeholder="Mot de passe" required />
+                            </div>
+
+                            <button class="secondary-btn auth-register-btn" type="submit">Créer mon compte</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
         <div class="toast" id="toast">Produit ajouté au panier</div>
 
@@ -462,7 +620,7 @@
                 </div>
             </div>
 
-            <p class="footer-copy">© 2026 ULTRA GOAL- Tous droits réservés</p>
+            <p class="footer-copy">© 2026 ULTRA GOAL - Tous droits réservés</p>
         </footer>
     </div>
 

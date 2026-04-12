@@ -5,6 +5,7 @@ let filteredProducts = [];
 let cart = JSON.parse(localStorage.getItem("ultragoal-cart")) || [];
 let favorites = JSON.parse(localStorage.getItem("ultragoal-favorites")) || [];
 let savedAddress = JSON.parse(localStorage.getItem("ultragoal-address")) || null;
+let currentUser = JSON.parse(localStorage.getItem("ultragoal-user")) || null;
 
 let currentProduct = null;
 let currentProductDetails = null;
@@ -43,6 +44,31 @@ function getPatchShortLabel(product) {
     return isNationalTeam(product) ? "Patch Coupe du Monde" : "Patch LDC";
 }
 
+function getPatchImage(product) {
+    return isNationalTeam(product)
+        ? "./assets/patch-cdm.png"
+        : "./assets/patch-ldc.webp";
+}
+
+function updatePatchPreview() {
+    const previewBox = document.getElementById("patch-hover-preview");
+    const previewImage = document.getElementById("patch-hover-image");
+    const previewLabel = document.getElementById("patch-hover-label");
+    const patchSelect = document.getElementById("patch-select");
+
+    if (!currentProduct || !previewBox || !previewImage || !previewLabel || !patchSelect) return;
+
+    if (patchSelect.value === "competition") {
+        previewBox.classList.remove("hidden");
+        previewImage.src = getPatchImage(currentProduct);
+        previewLabel.textContent = getPatchShortLabel(currentProduct);
+    } else {
+        previewBox.classList.add("hidden");
+        previewImage.src = "";
+        previewLabel.textContent = "";
+    }
+}
+
 function getProductImages(product) {
     const firstImage = product.url_image || "./assets/maillot-bresil.png";
     const secondImage = product.url_image_2 || null;
@@ -64,13 +90,6 @@ function getProductImages(product) {
 function truncateText(text, max = 150) {
     if (!text) return "";
     return text.length > max ? `${text.slice(0, max)}...` : text;
-}
-
-function getStockLabel(product) {
-    const stock = Number(product.quantite_stock || 0);
-    if (stock <= 0) return "Rupture de stock";
-    if (stock <= 5) return "Stock faible";
-    return "En stock";
 }
 
 function getCardBadge(product) {
@@ -99,6 +118,10 @@ function saveAddress(address) {
     localStorage.setItem("ultragoal-address", JSON.stringify(address));
 }
 
+function saveUser(user) {
+    localStorage.setItem("ultragoal-user", JSON.stringify(user));
+}
+
 function showToast(message) {
     const toast = document.getElementById("toast");
     toast.textContent = message;
@@ -124,6 +147,123 @@ function normalize(str) {
 }
 
 /* =========================
+   ACCOUNT / PAYMENT HELPERS
+========================= */
+function updateAccountUI() {
+    const label = document.getElementById("account-btn-label");
+    if (!label) return;
+
+    label.textContent = currentUser ? currentUser.name.split(" ")[0] : "Connexion";
+}
+
+function openAuthModal() {
+    document.getElementById("auth-modal-overlay").classList.remove("hidden");
+}
+
+function closeAuthModal() {
+    document.getElementById("auth-modal-overlay").classList.add("hidden");
+}
+
+function resolveLogoCandidates(baseName) {
+    return [
+        `./assets/${baseName}.png`,
+        `./assets/${baseName}.webp`,
+        `./assets/${baseName}.jpg`,
+        `./assets/${baseName}.jpeg`,
+        `./assets/${baseName}.svg`
+    ];
+}
+
+function loadLogoWithFallback(imgElement, baseName) {
+    if (!imgElement) return;
+
+    const candidates = resolveLogoCandidates(baseName);
+    let index = 0;
+
+    imgElement.onerror = () => {
+        index += 1;
+        if (index < candidates.length) {
+            imgElement.src = candidates[index];
+        } else {
+            imgElement.classList.add("hidden");
+        }
+    };
+
+    imgElement.src = candidates[index];
+}
+
+function initPaymentLogos() {
+    loadLogoWithFallback(document.getElementById("visa-logo"), "Visa-logo");
+    loadLogoWithFallback(document.getElementById("mastercard-logo"), "Mastercard-logo");
+    loadLogoWithFallback(document.getElementById("applepay-button-logo"), "Apple-Pay-Logo");
+}
+
+function getCardBrand(cardNumber) {
+    const clean = (cardNumber || "").replace(/\s/g, "");
+    if (clean.startsWith("4")) return "visa";
+    if (clean.startsWith("5")) return "mastercard";
+    return "";
+}
+
+function updateCardBrandUI() {
+    const cardNumberInput = document.getElementById("card-number");
+    const visaLogo = document.getElementById("visa-logo");
+    const mastercardLogo = document.getElementById("mastercard-logo");
+    const placeholder = document.getElementById("card-brand-placeholder");
+
+    if (!cardNumberInput || !visaLogo || !mastercardLogo || !placeholder) return;
+
+    const brand = getCardBrand(cardNumberInput.value);
+
+    visaLogo.classList.add("hidden");
+    mastercardLogo.classList.add("hidden");
+
+    if (brand === "visa") {
+        visaLogo.classList.remove("hidden");
+        placeholder.textContent = "Carte détectée : Visa";
+    } else if (brand === "mastercard") {
+        mastercardLogo.classList.remove("hidden");
+        placeholder.textContent = "Carte détectée : Mastercard";
+    } else {
+        placeholder.textContent = "Aucune carte détectée";
+    }
+}
+
+function formatCardNumber(value) {
+    return value
+        .replace(/\D/g, "")
+        .slice(0, 16)
+        .replace(/(.{4})/g, "$1 ")
+        .trim();
+}
+
+function formatExpiry(value) {
+    const clean = value.replace(/\D/g, "").slice(0, 4);
+    if (clean.length < 3) return clean;
+    return `${clean.slice(0, 2)}/${clean.slice(2)}`;
+}
+
+function updatePaymentMethodUI() {
+    const selected = document.querySelector('input[name="payment-method"]:checked')?.value || "card";
+    const cardFields = document.getElementById("card-payment-fields");
+    const applePayBox = document.getElementById("applepay-box");
+    const pills = document.querySelectorAll(".payment-method-pill");
+
+    pills.forEach((pill) => {
+        const input = pill.querySelector("input");
+        pill.classList.toggle("active", !!input?.checked);
+    });
+
+    if (selected === "applepay") {
+        cardFields?.classList.add("hidden");
+        applePayBox?.classList.remove("hidden");
+    } else {
+        cardFields?.classList.remove("hidden");
+        applePayBox?.classList.add("hidden");
+    }
+}
+
+/* =========================
    FETCH
 ========================= */
 async function fetchProducts() {
@@ -141,6 +281,7 @@ async function fetchProducts() {
         renderCart();
         renderFavorites();
         preloadSavedAddress();
+        updateAccountUI();
     } catch (error) {
         console.error(error);
         document.getElementById("produits-liste").innerHTML =
@@ -159,6 +300,10 @@ function populateFilters(products) {
     const championshipSelect = document.getElementById("filter-championship");
     const countrySelect = document.getElementById("filter-country");
     const sexSelect = document.getElementById("filter-sex");
+
+    championshipSelect.innerHTML = `<option value="">Tous les championnats</option>`;
+    countrySelect.innerHTML = `<option value="">Tous les pays</option>`;
+    sexSelect.innerHTML = `<option value="">Tous les profils</option>`;
 
     const championships = [...new Set(products.map((p) => p.championnat).filter(Boolean))].sort();
     const countries = [...new Set(products.map((p) => p.pays).filter(Boolean))].sort();
@@ -358,7 +503,6 @@ async function openProductModal(productId) {
 
         document.getElementById("modal-main-image").src = currentGalleryImages[0];
         document.getElementById("config-preview-image").src = currentGalleryImages[0];
-
         document.getElementById("modal-current-price").textContent = formatPrice(finalPrice);
 
         if (Number(product.reduction) > 0) {
@@ -386,7 +530,6 @@ async function openProductModal(productId) {
         document.getElementById("toggle-description-btn").textContent = "Lire plus";
 
         document.getElementById("flocking-select").value = "none";
-        document.getElementById("patch-select").value = "none";
 
         const officialWrapper = document.getElementById("official-player-wrapper");
         const officialSelect = document.getElementById("official-player-select");
@@ -400,9 +543,12 @@ async function openProductModal(productId) {
 
         const patchSelect = document.getElementById("patch-select");
         patchSelect.innerHTML = `
-      <option value="none">Sans patch</option>
-      <option value="competition">${getPatchLabel(product)}</option>
-    `;
+  <option value="none">Sans patch</option>
+  <option value="competition">${getPatchLabel(product)}</option>
+`;
+        patchSelect.value = "none";
+
+        updatePatchPreview();
 
         document.getElementById("qty-value").textContent = currentQuantity;
         renderSizeOptions();
@@ -528,6 +674,8 @@ function updateConfiguratorPrice() {
         price += 2.5;
         previewPatch = getPatchShortLabel(currentProduct);
     }
+
+    updatePatchPreview();
 
     document.getElementById("config-preview-name").textContent = previewName;
     document.getElementById("config-preview-patch").textContent = previewPatch;
@@ -719,8 +867,13 @@ function toggleFavoritesDrawer(open = null) {
    CHECKOUT
 ========================= */
 function preloadSavedAddress() {
+    if (currentUser && !savedAddress) {
+        document.getElementById("checkout-fullname").value = currentUser.name || "";
+    }
+
     if (!savedAddress) return;
-    document.getElementById("checkout-fullname").value = savedAddress.fullName || "";
+
+    document.getElementById("checkout-fullname").value = savedAddress.fullName || currentUser?.name || "";
     document.getElementById("checkout-street").value = savedAddress.street || "";
     document.getElementById("checkout-postalcode").value = savedAddress.postalCode || "";
     document.getElementById("checkout-city").value = savedAddress.city || "";
@@ -734,6 +887,8 @@ function toggleCheckoutModal(open = null) {
 
     if (shouldOpen) {
         renderCheckoutSummary();
+        updatePaymentMethodUI();
+        updateCardBrandUI();
     }
 }
 
@@ -750,7 +905,6 @@ function renderCheckoutSummary() {
     const total = subtotal + shipping;
 
     summary.innerHTML = `
-    <h3>Récapitulatif</h3>
     <p>Sous-total : <strong>${formatPrice(subtotal)}</strong></p>
     <p>Livraison : <strong>${formatPrice(shipping)}</strong></p>
     <p>Total : <strong>${formatPrice(total)}</strong></p>
@@ -774,6 +928,31 @@ async function submitCheckout(event) {
     };
 
     saveAddress(shippingAddress);
+
+    const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || "card";
+
+    if (paymentMethod === "card") {
+        const holder = document.getElementById("card-holder").value.trim();
+        const number = document.getElementById("card-number").value.replace(/\s/g, "");
+        const expiry = document.getElementById("card-expiry").value.trim();
+        const cvc = document.getElementById("card-cvc").value.trim();
+        const brand = getCardBrand(number);
+
+        if (!holder || !number || !expiry || !cvc) {
+            showToast("Merci de remplir les champs de paiement");
+            return;
+        }
+
+        if (!brand) {
+            showToast("Carte non reconnue : commence par 4 pour Visa ou 5 pour Mastercard");
+            return;
+        }
+
+        if (number.length < 16) {
+            showToast("Numéro de carte incomplet");
+            return;
+        }
+    }
 
     const items = cart.map((item) => ({
         productId: item.productId,
@@ -814,7 +993,7 @@ async function submitCheckout(event) {
       </div>
     `;
 
-        showToast("Commande validée");
+        showToast(paymentMethod === "applepay" ? "Paiement Apple Pay simulé validé" : "Commande validée");
         await fetchProducts();
     } catch (error) {
         console.error(error);
@@ -903,6 +1082,87 @@ function bindStaticEvents() {
     });
 
     document.getElementById("checkout-form").addEventListener("submit", submitCheckout);
+
+    document.getElementById("account-btn").addEventListener("click", () => {
+        if (currentUser) {
+            showToast(`Connecté : ${currentUser.name}`);
+            return;
+        }
+        openAuthModal();
+    });
+
+    document.getElementById("close-auth-modal").addEventListener("click", closeAuthModal);
+    document.getElementById("auth-modal-overlay").addEventListener("click", (event) => {
+        if (event.target.id === "auth-modal-overlay") closeAuthModal();
+    });
+
+    document.getElementById("register-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const name = document.getElementById("register-name").value.trim();
+        const email = document.getElementById("register-email").value.trim();
+        const password = document.getElementById("register-password").value.trim();
+
+        if (!name || !email || !password) {
+            showToast("Merci de remplir tous les champs");
+            return;
+        }
+
+        currentUser = { name, email, password };
+        saveUser(currentUser);
+        updateAccountUI();
+        closeAuthModal();
+        preloadSavedAddress();
+        showToast("Compte créé avec succès");
+    });
+
+    document.getElementById("login-form").addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const email = document.getElementById("login-email").value.trim();
+        const password = document.getElementById("login-password").value.trim();
+
+        if (!currentUser) {
+            showToast("Aucun compte enregistré, crée un compte d'abord");
+            return;
+        }
+
+        if (currentUser.email !== email || currentUser.password !== password) {
+            showToast("Email ou mot de passe incorrect");
+            return;
+        }
+
+        updateAccountUI();
+        closeAuthModal();
+        preloadSavedAddress();
+        showToast(`Bienvenue ${currentUser.name}`);
+    });
+
+    document.querySelectorAll('input[name="payment-method"]').forEach((input) => {
+        input.addEventListener("change", updatePaymentMethodUI);
+    });
+
+    document.getElementById("card-number").addEventListener("input", (event) => {
+        event.target.value = formatCardNumber(event.target.value);
+        updateCardBrandUI();
+    });
+
+    document.getElementById("card-expiry").addEventListener("input", (event) => {
+        event.target.value = formatExpiry(event.target.value);
+    });
+
+    document.getElementById("card-cvc").addEventListener("input", (event) => {
+        event.target.value = event.target.value.replace(/\D/g, "").slice(0, 4);
+    });
+
+    document.getElementById("applepay-btn").addEventListener("click", () => {
+        const appleInput = document.querySelector('input[name="payment-method"][value="applepay"]');
+        if (appleInput) {
+            appleInput.checked = true;
+            updatePaymentMethodUI();
+            showToast("Apple Pay sélectionné");
+        }
+    });
 
     document.getElementById("hero-catalog-btn").addEventListener("click", () => scrollToSection("catalogue"));
     document.getElementById("hero-promo-btn").addEventListener("click", () => {
@@ -1014,5 +1274,9 @@ function bindStaticEvents() {
 ========================= */
 document.addEventListener("DOMContentLoaded", () => {
     bindStaticEvents();
+    initPaymentLogos();
+    updatePaymentMethodUI();
+    updateCardBrandUI();
+    updateAccountUI();
     fetchProducts();
 });
